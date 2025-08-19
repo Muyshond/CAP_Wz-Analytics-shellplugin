@@ -9,8 +9,6 @@ module.exports = cds.service.impl(async function () {
         
         try{
 
-            
-            // Basic destination retrieval 
             const destination = await getDestination({ destinationName: 'Piwik' });
     
             if (!destination) {
@@ -32,23 +30,23 @@ module.exports = cds.service.impl(async function () {
         
     });
 
-    this.on('getPiwikjs', async (req) => {
+    // this.on('getPiwikjs', async (req) => {
         
-        try {
-            const destination = await getDestination({ destinationName: 'Piwik' });
-            const response = await executeHttpRequest(destination, {
-                method: 'GET',
-                url: '' 
-            });
+    //     try {
+    //         const destination = await getDestination({ destinationName: 'Piwik' });
+    //         const response = await executeHttpRequest(destination, {
+    //             method: 'GET',
+    //             url: '' 
+    //         });
 
-            return response.data; 
+    //         return response.data; 
 
-        } catch (error) {
-            console.error(error);
-            return "Error fetching piwik.js: " + error.message;
-        }
+    //     } catch (error) {
+    //         console.error(error);
+    //         return "Error fetching piwik.js: " + error.message;
+    //     }
         
-    });
+    // });
 
 
 
