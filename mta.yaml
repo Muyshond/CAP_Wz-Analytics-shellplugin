@@ -18,57 +18,7 @@ modules:
     instances: 1
   build-parameters:
     builder: npm-ci
-- name: analytics-plugin-app-deployer
-  type: com.sap.application.content
-  path: gen
-  requires:
-  - name: analytics-plugin-auth
-  - name: srv-api
-  - name: analytics-plugin-html5-repo-host
-    parameters:
-      config:
-        HTML5Runtime_enabled: true
-      content-target: true
-  - name: analytics-plugin-app-deployer
 
-  parameters:
-    config:
-      HTML5Runtime_enabled: true
-      init_data:
-        instance:
-          destinations:
-          - Authentication: NoAuthentication
-            HTML5.DynamicDestination: true
-            HTML5.ForwardAuthToken: true
-            Name: srv-api
-            ProxyType: Internet
-            Type: HTTP
-            URL: ~{srv-api/srv-url}
-          - Authentication: NoAuthentication
-            Name: ui5
-            ProxyType: Internet
-            Type: HTTP
-            URL: https://ui5.sap.com
-          existing_destinations_policy: update
-  build-parameters:
-    build-result: app/
-    requires:
-    - artifacts:
-      - benmbsshellplugin.zip
-      name: benmbsshellplugin
-      target-path: app/
-- name: benmbsshellplugin
-  type: html5
-  path: app/shellplugin
-  build-parameters:
-    build-result: dist
-    builder: custom
-    commands:
-    - npm install
-    - npm run build:cf
-    supported-platforms: []
-  requires:
-    - name: html5-repo-runtime 
 resources:
 - name: analytics-plugin-auth
   type: org.cloudfoundry.managed-service

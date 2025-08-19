@@ -4,7 +4,7 @@
 - No database
 - No connection to backend
 - Just a connection to a destination to return a simple value
-- A shell plugin to retreive the data and send it to piwik
+- Connected a seperate app https://github.com/Muyshond/Ypto-ShellApp (via destination)
 
 ## Start the applicaiton 
 ```
@@ -12,3 +12,4 @@
 OR 
     npm start
 ```
+
