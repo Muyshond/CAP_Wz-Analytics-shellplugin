@@ -6,7 +6,7 @@ Read the destination and return its properties.
 ## The Piwik destination
 ![alt text](images/destination.png)
 
-## The CAP destination
+## The CAP destination (Dont need it anymore (app inside cap, consumes cap directly))
 ![alt text](images/cap-destination.png)
 
 ## This cap application has: 
@@ -23,4 +23,3 @@ Read the destination and return its properties.
 OR 
     npm start
 ```
-

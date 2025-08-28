@@ -16,15 +16,15 @@ export default class Component extends BaseComponent {
 
     try{
 
-    //   const oModel = new sap.ui.model.odata.v4.ODataModel({
-    //         serviceUrl: sap.ui.require.toUrl("be/nmbs/plugins/wzanalyticspluginshellapp") + "/cap-plugin-api/odata/v4/catalog/",
-    //         synchronizationMode: "None",
-    //         groupId: "$direct"
-    //       });
+      const oModel = new sap.ui.model.odata.v4.ODataModel({
+            serviceUrl: sap.ui.require.toUrl("be/nmbs/plugins/wzanalyticspluginshellapp") + "/odata/v4/catalog/", 
+            synchronizationMode: "None",
+            groupId: "$direct"
+        });
 
-    //   const workzoneId = await oModel.bindProperty("/getWorkzoneID()").requestValue();
-  
-    const workzoneId = "35"
+      const workzoneId = await oModel.bindProperty("/getWorkzoneID()").requestValue();
+        console.log(workzoneId)
+    //const workzoneId = "35"
 
       var _paq = window._paq = window._paq || [];
       _paq.push(["setDomains", ["*.hana.ondemand.com"]]);
@@ -64,6 +64,7 @@ export default class Component extends BaseComponent {
       }, false);
 
     }catch(error){
+        console.warn("error")
     console.error(error)
   }
     
