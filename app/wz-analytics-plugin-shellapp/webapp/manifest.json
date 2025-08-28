@@ -2,7 +2,7 @@
   "_version": "1.76.0",
   "sap.app": {
     "id": "be.nmbs.plugins.wzanalyticspluginshellapp",
-    "type": "application",
+    "type": "component",
     "i18n": "i18n/i18n.properties",
     "applicationVersion": {
       "version": "0.0.1"
@@ -15,17 +15,7 @@
       "version": "1.18.5",
       "toolsId": "93abfb82-d235-4108-9c83-27de4e5fa29e"
     },
-    "dataSources": {
-      "mainService": {
-        "uri": "odata/v4/catalog/",
-        "type": "OData",
-        "settings": {
-          "annotations": [],
-          "odataVersion": "4.0"
-        }
-      }
-    },
-     "crossNavigation": {
+    "crossNavigation": {
       "inbounds": {
         "Shell-plugin": {
           "signature": {
@@ -76,15 +66,13 @@
           "odataVersion": "4.0"
         }
       }
-    },
-  
-    "sap.flp": {
-    "type": "plugin"
-    },
-    "sap.cloud": {
-      "public": true,
-      "service": "analytics-plugin-html5-repo-host"
     }
-    
+  },
+  "sap.flp": {
+    "type": "plugin"
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "analytics-plugin"
   }
 }
