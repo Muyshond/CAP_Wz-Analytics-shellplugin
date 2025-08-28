@@ -28,7 +28,8 @@
     "watch-shellplugin": "cds watch --open be.nmbs.shellplugin/index.html?sap-ui-xx-viewCache=false --livereload false",
     "undeploy": "cf undeploy analytics-plugin --delete-services --delete-service-keys --delete-service-brokers",
     "build": "rimraf resources mta_archives && mbt build --mtar archive",
-    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-wz-analytics-plugin-shellapp": "cds watch --open be.nmbs.plugins.wzanalyticspluginshellapp/index.html?sap-ui-xx-viewCache=false --livereload false"
   },
   "cds": {
     "requires": {

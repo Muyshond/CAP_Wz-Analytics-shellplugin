@@ -1,0 +1,102 @@
+{
+  "_version": "1.76.0",
+  "sap.app": {
+    "id": "be.nmbs.plugins.wzanalyticspluginshellapp",
+    "type": "application",
+    "i18n": "i18n/i18n.properties",
+    "applicationVersion": {
+      "version": "0.0.1"
+    },
+    "title": "{{appTitle}}",
+    "description": "{{appDescription}}",
+    "resources": "resources.json",
+    "sourceTemplate": {
+      "id": "@sap/generator-fiori:basic",
+      "version": "1.18.5",
+      "toolsId": "93abfb82-d235-4108-9c83-27de4e5fa29e"
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "odata/v4/catalog/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "odataVersion": "4.0"
+        }
+      }
+    },
+     "crossNavigation": {
+      "inbounds": {
+        "Shell-plugin": {
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          },
+          "hideLauncher": true,
+          "semanticObject": "Shell",
+          "action": "plugin"
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {
+      "icon": "",
+      "favIcon": "",
+      "phone": "",
+      "phone@2": "",
+      "tablet": "",
+      "tablet@2": ""
+    },
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "flexEnabled": true,
+    "dependencies": {
+      "minUI5Version": "1.139.0",
+      "libs": {
+        "sap.m": {},
+        "sap.ui.core": {}
+      }
+    },
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "settings": {
+          "defaultBindingMode": "TwoWay",
+          "useBatch": true,
+          "operationMode": "Server",
+          "earlyRequests": true
+        },
+        "type": "sap.ui.model.odata.v4.ODataModel"
+      }
+    },
+    "dataSources": {
+      "mainService": {
+        "uri": "./cap-plugin-api/odata/v4/catalog/",
+        "type": "OData",
+        "settings": {
+          "odataVersion": "4.0"
+        }
+      }
+    },
+  
+    "sap.flp": {
+    "type": "plugin"
+    },
+    "sap.cloud": {
+      "public": true,
+      "service": "analytics-plugin-html5-repo-host"
+    }
+    
+  }
+}

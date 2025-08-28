@@ -18,6 +18,60 @@ modules:
     instances: 1
   build-parameters:
     builder: npm-ci
+- name: benmbspluginswzanalyticspluginshellapp
+  type: html5
+  path: app/wz-analytics-plugin-shellapp
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: analytics-plugin-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: analytics-plugin-html5-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - benmbspluginswzanalyticspluginshellapp.zip
+      name: benmbspluginswzanalyticspluginshellapp
+      target-path: resources/
+- name: analytics-plugin-destination-content
+  type: com.sap.application.content
+  requires:
+  - name: analytics-plugin-destination
+    parameters:
+      content-target: true
+  - name: analytics-plugin-html5-repo-host
+    parameters:
+      service-key:
+        name: analytics-plugin-html5-repo-host-key
+  - name: analytics-plugin-auth
+    parameters:
+      service-key:
+        name: analytics-plugin-auth-key
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: analytics_plugin_repo_host
+          ServiceInstanceName: analytics-plugin-html5-repo-host
+          ServiceKeyName: analytics-plugin-html5-repo-host-key
+          sap.cloud.service: analytics-plugin
+        - Authentication: OAuth2UserTokenExchange
+          Name: analytics_plugin_uaa
+          ServiceInstanceName: analytics-plugin-auth
+          ServiceKeyName: analytics-plugin-auth-key
+          sap.cloud.service: analytics-plugin
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
 
 resources:
 - name: analytics-plugin-auth
@@ -29,11 +83,13 @@ resources:
     path: ./xs-security.json
     service: xsuaa
     service-plan: application
+
 - name: analytics-plugin-destination
   type: org.cloudfoundry.managed-service
   parameters:
     config:
-      HTML5Runtime_enabled: false
+      HTML5Runtime_enabled: true
+      public: true    
       init_data:
         instance:
           destinations:
@@ -42,9 +98,18 @@ resources:
             ProxyType: Internet
             Type: HTTP
             URL: https://ui5.sap.com
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
           existing_destinations_policy: update
     service: destination
     service-plan: lite
+  requires:
+  - name: srv-api
 - name: html5-repo-runtime
   type: org.cloudfoundry.managed-service
   parameters:
@@ -53,16 +118,17 @@ resources:
 - name: analytics-plugin-html5-repo-host
   type: org.cloudfoundry.managed-service
   parameters:
+    public: true
     service: html5-apps-repo
     service-plan: app-host
-    public: true
+
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
+
 build-parameters:
   before-all:
   - builder: custom
     commands:
     - npm ci
     - npx cds build --production
-

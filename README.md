@@ -14,7 +14,7 @@ Read the destination and return its properties.
 - No frontend
 - No connection to backend 
 - A connection to a destination to return a string
-- Connected a seperate app https://github.com/Muyshond/Ypto-ShellApp (via destination)
+- Connected a seperate app [Shell application](https://github.com/Muyshond/Ypto-ShellApp) (via destination)
 
 
 ## Start the applicaiton 
