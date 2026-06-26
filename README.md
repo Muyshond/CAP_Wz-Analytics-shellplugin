@@ -9,13 +9,20 @@ Read the destination and return its properties.
 ## The CAP destination (Dont need it anymore (app inside cap, consumes cap directly))
 ![alt text](images/cap-destination.png)
 
-## This cap application has: 
-- No database
-- No frontend
-- No connection to backend 
-- A connection to a destination to return a string
-- Connected a seperate app [Shell application](https://github.com/Muyshond/Ypto-ShellApp) (via destination)
+## HR Connect API (piwik-hrconnect destination)
 
+De `piwik-hrconnect` destination gebruikt OAuth2 Client Credentials om de HR API aan te spreken.
+
+De `x-api-key` header wordt **niet** in de destination zelf opgeslagen (vermijd plaintext in de Cockpit), maar als environment variable via `mta.yaml`:
+
+```yaml
+properties:
+  HR_API_KEY: ...
+```
+
+Bij deployment wordt die automatisch geïnjecteerd in de CF app en uitgelezen via `process.env.HR_API_KEY` in `srv/interactions.js`.
+
+De Client Secret staat wél in de destination (encrypted/hidden door BTP).
 
 ## Start the applicaiton 
 ```

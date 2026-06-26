@@ -6,6 +6,8 @@ service CatalogService {
 
     function getPiwikjs() returns String;
 
+    function getEmployee() returns String;
+
 
 
 }

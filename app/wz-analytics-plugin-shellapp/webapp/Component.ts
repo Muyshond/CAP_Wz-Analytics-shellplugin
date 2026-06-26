@@ -23,14 +23,17 @@ export default class Component extends BaseComponent {
         });
 
       const workzoneId = await oModel.bindProperty("/getWorkzoneID()").requestValue();
-        console.log(workzoneId)
+
+      const employee = await oModel.bindProperty("/getEmployee()").requestValue();
+      console.log(employee);
     //const workzoneId = "35"
 
       var _paq = window._paq = window._paq || [];
       _paq.push(["setDomains", ["*.hana.ondemand.com"]]);
       _paq.push(['enableLinkTracking']);
-      _paq.push(['setDocumentTitle', document.title]);
+      _paq.push(['setDocumentTitle', this.getHash()]);
       _paq.push(['setCustomUrl', document.URL]);
+      _paq.push(['setCustomVariable', 1, 'testvariable', 'test', 'visit']);
       _paq.push(['trackPageView']);
       
       const url = sap.ui.require.toUrl("be/nmbs/plugins/wzanalyticspluginshellapp") + "/Piwik/";

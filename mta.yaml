@@ -13,6 +13,8 @@ modules:
   - name: srv-api
     properties:
       srv-url: ${default-url}
+  properties:
+    HR_API_KEY: ""
   parameters:
     buildpack: nodejs_buildpack
     instances: 1
