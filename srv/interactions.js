@@ -1,6 +1,7 @@
 const cds = require('@sap/cds');
 const { getDestination } = require('@sap-cloud-sdk/connectivity');
-const { executeHttpRequest } = require('@sap-cloud-sdk/http-client'); 
+const { executeHttpRequest } = require('@sap-cloud-sdk/http-client');
+const https = require('https');
 
 module.exports = cds.service.impl(async function () {
 
@@ -33,7 +34,8 @@ module.exports = cds.service.impl(async function () {
     this.on('getEmployee', async (req) => {
 
         try {
-            console.log('HR_API_KEY:', process.env.HR_API_KEY ? 'SET' : 'NOT SET');
+            const userEmail = await getUserEmail(req);
+            
             const destination = await getDestination({ destinationName: 'piwik-hrconnect' });
 
             if (!destination) {
@@ -42,21 +44,28 @@ module.exports = cds.service.impl(async function () {
             }
 
             const token = destination.authTokens?.[0]?.value;
-            console.log('Token:', token ? 'SET' : 'NOT SET');
-            console.log('authTokens:', JSON.stringify(destination.authTokens));
 
-            const response = await executeHttpRequest(destination, {
-                method: 'GET',
-                url: '/employees/00002164',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'x-api-key': process.env.HR_API_KEY
-                }
+            const data = await new Promise((resolve, reject) => {
+                const options = {
+                    hostname: 'b-int-dev.test01.apimanagement.eu20.hana.ondemand.com',
+                    port: 443,
+                    path: '/v1/private/hrconnect/employees/00002164',
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'x-api-key': process.env.HR_API_KEY
+                    }
+                };
+                const req = https.request(options, (res) => {
+                    let body = '';
+                    res.on('data', chunk => body += chunk);
+                    res.on('end', () => resolve(body));
+                });
+                req.on('error', reject);
+                req.end();
             });
 
-            console.log('response.data type:', typeof response.data);
-            console.log('response.status:', response.status);
-            return JSON.stringify(response.data);
+            return data;
 
         } catch (error) {
             console.error(error);
@@ -64,6 +73,34 @@ module.exports = cds.service.impl(async function () {
         }
 
     });
+
+
+    function getUserEmail(req) {
+        try {
+            const authHeader = req._.req?.headers?.authorization;
+            if (authHeader) {
+                const token = authHeader.replace('Bearer ', '');
+                const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+                return payload.email || payload.user_name || req.user.id;
+            }
+        } catch(e) {
+            console.error('getUserEmail error:', e);
+        }
+        return req.user.id;
+    }
+    // this.on('getUserEmail', async (req) => {
+    //     try {
+    //         const authHeader = req._.req?.headers?.authorization;
+    //         if (authHeader) {
+    //             const token = authHeader.replace('Bearer ', '');
+    //             const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+    //             return payload.email || payload.user_name || req.user.id;
+    //         }
+    //     } catch(e) {
+    //         console.error('getUserEmail error:', e);
+    //     }
+    //     return req.user.id;
+    // });
 
     // this.on('getPiwikjs', async (req) => {
         

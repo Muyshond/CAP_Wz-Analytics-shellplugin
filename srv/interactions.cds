@@ -8,6 +8,8 @@ service CatalogService {
 
     function getEmployee() returns String;
 
+    function getUserEmail() returns String;
+
 
 
 }

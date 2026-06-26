@@ -6,9 +6,6 @@ Read the destination and return its properties.
 ## The Piwik destination
 ![alt text](images/destination.png)
 
-## The CAP destination (Dont need it anymore (app inside cap, consumes cap directly))
-![alt text](images/cap-destination.png)
-
 ## HR Connect API (piwik-hrconnect destination)
 
 De `piwik-hrconnect` destination gebruikt OAuth2 Client Credentials om de HR API aan te spreken.
