@@ -1,29 +1,32 @@
 # Welcome to this very simple cap app
 
-The goals of this app was to have an endpoint that returns a property value from a destination. 
-Read the destination and return its properties.
+This app is used for analytical purposes. 
+**PIWIK** 
 
 ## The Piwik destination
+
 ![alt text](images/destination.png)
 
 ## HR Connect API (piwik-hrconnect destination)
+![alt text](images/hr-destination.png)
 
-De `piwik-hrconnect` destination gebruikt OAuth2 Client Credentials om de HR API aan te spreken.
+The `x-api-key` header is not configured in the destination (no plaintext secrets)
 
-De `x-api-key` header wordt **niet** in de destination zelf opgeslagen (vermijd plaintext in de Cockpit), maar als environment variable via `mta.yaml`:
+Once deployed, the hrconnect api uses the secret from the yaml `process.env.HR_API_KEY` in `srv/interactions.js`.
 
-```yaml
-properties:
-  HR_API_KEY: ...
+
+## deploy shellapp
+Create a secrets.mtaext for the hrconnect api 
+``` yaml
+_schema-version: 3.3.0
+extends: analytics-plugin
+ID: analytics-plugin-secrets
+modules:
+- name: analytics-plugin-srv
+  properties:
+    HR_API_KEY: "secret key"
+
 ```
-
-Bij deployment wordt die automatisch geïnjecteerd in de CF app en uitgelezen via `process.env.HR_API_KEY` in `srv/interactions.js`.
-
-De Client Secret staat wél in de destination (encrypted/hidden door BTP).
-
-## Start the applicaiton 
-```
-    cds watch 
-OR 
-    npm start
+``` bash
+cf deploy mta_archives/analytics-plugin_1.0.0.mtar -e secrets.mtaext
 ```
