@@ -3,12 +3,11 @@
   "sap.app": {
     "id": "be.nmbs.plugins.wzanalyticspluginshellapp",
     "type": "component",
-    "i18n": "i18n/i18n.properties",
     "applicationVersion": {
       "version": "0.0.1"
     },
-    "title": "{{appTitle}}",
-    "description": "{{appDescription}}",
+    "title": "Analytics plugin",
+    "description": "App to collect information about workzone activity",
     "resources": "resources.json",
     "sourceTemplate": {
       "id": "@sap/generator-fiori:basic",
