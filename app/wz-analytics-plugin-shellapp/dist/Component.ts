@@ -23,7 +23,6 @@ export default class Component extends BaseComponent {
         });
 
       const workzoneId = await oModel.bindProperty("/getWorkzoneID()").requestValue();
-      //const userEmail = await oModel.bindProperty("/getUserEmail()").requestValue();
 
       const employeeJson = await oModel.bindProperty("/getEmployee()").requestValue();
       let employee: Record<string, string> = {};
