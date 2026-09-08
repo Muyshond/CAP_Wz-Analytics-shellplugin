@@ -23,8 +23,14 @@ export default class Component extends BaseComponent {
         });
 
       const workzoneId = await oModel.bindProperty("/getWorkzoneID()").requestValue();
+       var employeeJson = null
+      try{
+        employeeJson = await oModel.bindProperty("/getEmployee()").requestValue();
 
-      const employeeJson = await oModel.bindProperty("/getEmployee()").requestValue();
+      } catch(error){
+        console.error("HR Employee not found")
+      }
+
       let employee: Record<string, string> = {};
       try { employee = employeeJson ? JSON.parse(employeeJson) : {}; } catch(e) { console.warn('Employee data error:', employeeJson); }
 
@@ -33,8 +39,10 @@ export default class Component extends BaseComponent {
       _paq.push(['enableLinkTracking']);
       _paq.push(['setDocumentTitle', this.getHash()]);
       _paq.push(['setCustomUrl', document.URL]);
-      _paq.push(['setCustomVariable', 1, 'Directorate', employee.directorate_description, 'visit']);
-      _paq.push(['setCustomVariable', 2, 'WorkLocation', employee.workseat_personnel_framework_description, 'visit']);
+      if (employeeJson != null){
+        _paq.push(['setCustomVariable', 1, 'Directorate', employee.directorate_description, 'visit']);
+        _paq.push(['setCustomVariable', 2, 'WorkLocation', employee.workseat_personnel_framework_description, 'visit']);
+      }
       _paq.push(['trackPageView']);
       
       const url = sap.ui.require.toUrl("be/nmbs/plugins/wzanalyticspluginshellapp") + "/Piwik/";
