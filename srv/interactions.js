@@ -3,61 +3,26 @@ const { getDestination } = require('@sap-cloud-sdk/connectivity');
 const { executeHttpRequest } = require('@sap-cloud-sdk/http-client');
 const crypto = require('crypto');
 
-const EMPLOYEE_FIELDS = 'contact_details_work_email,directorate_id,directorate_description,supra_division_id,supra_division_description';
-const CACHE_REFRESH_MS = 2 * 24 * 60 * 60 * 1000; // 2 days
-const PAGE_SIZE = 1000;
+const employeeCache = new Map();
 
-let employeeCache = new Map();
-let cacheLoadingPromise = null;
-
-async function loadEmployeeCache() {
+async function fetchEmployeeByEmail(userEmail) {
     const destination = await getDestination({ destinationName: 'piwik-hrconnect' });
     if (!destination) {
         throw new Error('piwik-hrconnect destination not found');
     }
 
-    const newCache = new Map();
-    let offset = 0;
-    let total = null;
+    const filter = `contact_details_work_email eq '${userEmail}'`;
+    const path = `/api/v1/internal/hrconnect/employees?limit=1&filter=${encodeURIComponent(filter)}`;
 
-    while (total === null || offset < total) {
-        const path = `/api/v1/internal/hrconnect/employees?limit=${PAGE_SIZE}&offset=${offset}&fields=${encodeURIComponent(EMPLOYEE_FIELDS)}`;
-
-        const response = await executeHttpRequest(destination, {
-            method: 'GET',
-            url: path,
-            headers: {
-                'x-sncb-id': crypto.randomUUID()
-            }
-        });
-
-        const items = response.data?.items || [];
-        for (const employee of items) {
-            if (employee.contact_details_work_email) {
-                newCache.set(employee.contact_details_work_email.toLowerCase(), employee);
-            }
+    const response = await executeHttpRequest(destination, {
+        method: 'GET',
+        url: path,
+        headers: {
+            'x-sncb-id': crypto.randomUUID()
         }
+    });
 
-        if (total === null) {
-            total = response.data?.meta?.totalRecords ?? items.length;
-        }
-        offset += items.length;
-
-        if (items.length === 0) break;
-    }
-
-    employeeCache = newCache;
-    console.log(`Employee cache refreshed: ${employeeCache.size} employees loaded`);
-}
-
-function ensureEmployeeCache() {
-    if (!cacheLoadingPromise) {
-        cacheLoadingPromise = loadEmployeeCache().catch(error => {
-            cacheLoadingPromise = null;
-            throw error;
-        });
-    }
-    return cacheLoadingPromise;
+    return response.data?.items?.[0] || null;
 }
 
 function getUserEmail(req) {
@@ -75,11 +40,6 @@ function getUserEmail(req) {
 }
 
 module.exports = cds.service.impl(async function () {
-
-    ensureEmployeeCache().catch(error => console.error('Initial employee cache load failed:', error));
-    setInterval(() => {
-        loadEmployeeCache().catch(error => console.error('Employee cache refresh failed:', error));
-    }, CACHE_REFRESH_MS);
 
     this.on('getWorkzoneID', async (req) => {
 
@@ -104,14 +64,20 @@ module.exports = cds.service.impl(async function () {
     this.on('getEmployee', async (req) => {
 
         try {
-            const userEmail = getUserEmail(req);
-
-            await ensureEmployeeCache();
-
-            const employee = employeeCache.get(userEmail.toLowerCase());
+            var userEmail = getUserEmail(req).toLowerCase();
+            //Emails have @testbelgiantrain.be behind so replace it
+            userEmail = userEmail.split('@')[0] + "@test.belgiantrain.be"
+            
+            let employee = employeeCache.get(userEmail);
 
             if (!employee) {
-                return req.error(404, `No employee found for work email ${userEmail}`);
+                employee = await fetchEmployeeByEmail(userEmail);
+
+                if (!employee) {
+                    return req.error(404, `No employee found for work email ${userEmail}`);
+                }
+
+                employeeCache.set(userEmail, employee);
             }
 
             return JSON.stringify(employee);

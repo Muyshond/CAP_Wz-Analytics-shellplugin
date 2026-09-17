@@ -3,12 +3,10 @@
 This app is used for analytical purposes. 
 **PIWIK** 
 
-## The Piwik destination
-
-![alt text](images/destination.png)
-
-## HR Connect API (piwik-hrconnect destination)
-![alt text](images/hr-destination.png)
+# TODO 
+emails end with @test.belgiantrain.be  
+filter zoekt hier ook op 
+ALS naar TST of PRD => verwijder de toevoeging van test
 
 
 
